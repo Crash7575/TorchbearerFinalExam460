@@ -1,7 +1,7 @@
 # Development Log – The Torchbearer
 
-**Student Name:** ___________________________
-**Student ID:** ___________________________
+**Student Name:** Seth Blanchard
+**Student ID:** 131933669
 
 > Instructions: Write at least four dated entries. Required entry types are marked below.
 > Two to five sentences per entry is sufficient. Write entries as you go, not all in one
@@ -10,12 +10,14 @@
 
 ---
 
-## Entry 1 – [Date]: Initial Plan
+## Entry 1 – 5-7-2026: Initial Plan
 
-> Required. Write this before writing any code. Describe your plan: what you will
-> implement first, what parts you expect to be difficult, and how you plan to test.
-
-_Your entry here._
+To tackle this problem, I plan to start with part 1 and 2 of the assignment.
+Starting with the simple function for selecting sources then moving onto getting the
+dijkstras algorithm working and creating a test case to ensure it functions correctly.
+After that moving onto the precomputing distances function and then creating its test
+case. With the simpler parts out of the way it will be easier to tackle finding the
+optimal route that includes all relic chambers.
 
 ---
 
