@@ -34,7 +34,19 @@ def explain_problem():
 
     TODO
     """
-    return "TODO"
+
+    explination = """
+- **Why a single shortest-path run from S is not enough:**
+    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes
+
+- **What decision remains after all inter-location costs are known:**
+    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path
+
+- **Why this requires a search over orders (one sentence):**
+    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path
+    """
+
+    return explination
 
 
 # =============================================================================
@@ -56,7 +68,17 @@ def select_sources(spawn, relics, exit_node):
 
     TODO
     """
-    pass
+
+    # Create the list and add the spawn
+    search_nodes = []
+    search_nodes.append(spawn)
+
+    # Add all relics to the search_nodes
+    for node in relics:
+        search_nodes.append(node)
+
+    # Return the nodes to search
+    return search_nodes
 
 
 def run_dijkstra(graph, source):
@@ -75,7 +97,48 @@ def run_dijkstra(graph, source):
 
     TODO
     """
-    pass
+
+    heap = []
+    finalized_nodes = []
+    min_distances = {}
+
+    # Check if graph is empty
+    if (graph is None or len(graph) == 0):
+        return min_distances
+
+    # Initialize min distances to inf for all nodes in the graph
+    for node in graph:
+        min_distances[node] = float('inf')
+
+    # Add the start node to solution
+    min_distances[source] = float(0)
+    heapq.heappush(heap, (0, source))
+
+    # While there are remaining nodes to add keep iterating
+    while heap:
+        # Pop from the heap
+        curr_dist, curr_node = heapq.heappop(heap)
+
+        # Check if node is already finalized
+        if curr_node in finalized_nodes:
+            continue
+
+        # Finalize the node
+        finalized_nodes.append(curr_node)
+
+        # Check adjacent nodes
+        for next_node, dist in graph[curr_node]:
+            # Check if current path is longer than min 
+            if curr_dist + dist >= min_distances[next_node]:
+                continue
+
+            # Add this node to heap and min
+            heapq.heappush(heap, (curr_dist + dist, next_node))
+            min_distances[next_node] = float(curr_dist + dist)
+
+
+
+    return min_distances
 
 
 def precompute_distances(graph, spawn, relics, exit_node):
@@ -278,6 +341,84 @@ def _run_tests():
 
     print("\nAll provided tests passed.")
 
+def run_dijkstra_tests():
+    # Test 1: Simple graph
+    # Check that it works in the normal case
+    graph_1 = {
+        'A': [('B', 1), ('C', 6)],
+        'B': [('C', 4), ('D', 2)],
+        'C': [],
+        'D': [('C', 1)]
+    }
+
+    solution_1 = {
+        'A': float(0),
+        'B': float(1),
+        'C': float(4),
+        'D': float(3)
+    }
+
+    min_distances = run_dijkstra(graph_1, 'A')
+    assert min_distances == solution_1, f"Test 1 FAILED: expected {solution_1}, got {min_distances}"
+
+    # Test 2: Cycle and disconnected graph
+    # Check if it handles cycles and disconnected graphs
+    graph_2 = {
+        'A': [('B', 1)],
+        'B': [('C', 2)],
+        'C': [('A', 3)],
+        'D': [('C', 1)]
+    }
+
+    solution_2a = {
+        'A': float(0),
+        'B': float(1),
+        'C': float(3),
+        'D': float('inf')
+    }
+
+    solution_2b = {
+        'A': float(4),
+        'B': float(5),
+        'C': float(1),
+        'D': float(0)
+    }
+    
+    min_distances = run_dijkstra(graph_2, 'A')
+    assert min_distances == solution_2a, f"Test 2a FAILED: expected {solution_2a}, got {min_distances}"
+
+    min_distances = run_dijkstra(graph_2, 'D')
+    assert min_distances == solution_2b, f"Test 2b FAILED: expected {solution_2b}, got {min_distances}"
+
+    # Test 3: Single node
+    # Check if it correctly handles a single node
+    graph_3 = {
+        'A': []
+    }
+
+    solution_3 = {
+        'A': float(0)
+    }
+
+    min_distances = run_dijkstra(graph_3, 'A')
+    assert min_distances == solution_3, f"Test 3 FAILED: expected {solution_3}, got {min_distances}"
+
+    # Test 4: Empty graph
+    # Check that it doesn't crash when given an empty graph and that it returns an empty dictionary
+    graph_4 = {}
+    solution_4 = {}
+
+    min_distances = run_dijkstra(graph_4, None)
+    assert min_distances == solution_4, f"Test 4 FAILED: expected {solution_4}, got {min_distances}"
+
+    # Test 5: None given
+    # Check that it doesn't crash when given None and that it returns an empty dictionary
+    min_distances = run_dijkstra(None, None)
+    assert min_distances == solution_4, f"Test 5 FAILED: expected {solution_4}, got {min_distances}"
+
+    # All Tests were passed
+    print("\nAll Dijkstra tests passed.")
 
 if __name__ == "__main__":
-    _run_tests()
+    run_dijkstra_tests()
+    #_run_tests()

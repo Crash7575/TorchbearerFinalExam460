@@ -21,16 +21,19 @@ optimal route that includes all relic chambers.
 
 ---
 
-## Entry 2 – [Date]: [Short description]
+## Entry 2 – 5-11-2026: Working Dijkstras Algorithm
 
-> Required. At least one entry must describe a bug, wrong assumption, or design change
-> you encountered. Describe what went wrong and how you resolved it.
-
-_Your entry here._
+Part 1 is filled out, and Part 2 is done up to the dijkstras algorithm.
+A working implementation of Dijkstras in run\_dijkstras() has been finished and tested to work correctly.
+This tests that it works for a normal graph and finds the shortest path.
+It also tests for how it handles the edge cases of a cycle, diconnected graph, single node, empty graph, and None.
 
 ---
 
 ## Entry 3 – [Date]: [Short description]
+
+> Required. At least one entry must describe a bug, wrong assumption, or design change
+> you encountered. Describe what went wrong and how you resolved it.
 
 _Your entry here._
 
@@ -51,8 +54,8 @@ _Your entry here._
 
 | Part | Estimated Hours |
 |---|---|
-| Part 1: Problem Analysis | |
-| Part 2: Precomputation Design | |
+| Part 1: Problem Analysis | 0.15 |
+| Part 2: Precomputation Design | 1 |
 | Part 3: Algorithm Correctness | |
 | Part 4: Search Design | |
 | Part 5: State and Search Space | |

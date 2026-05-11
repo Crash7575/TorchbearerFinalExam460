@@ -13,17 +13,14 @@
 
 ## Part 1: Problem Analysis
 
-> Document why this problem is not just a shortest-path problem. Three bullet points, one
-> per question. Each bullet should be 1-2 sentences max.
-
 - **Why a single shortest-path run from S is not enough:**
-  _Your answer here._
+    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes
 
 - **What decision remains after all inter-location costs are known:**
-  _Your answer here._
+    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path
 
 - **Why this requires a search over orders (one sentence):**
-  _Your answer here._
+    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path
 
 ---
 
@@ -31,33 +28,27 @@
 
 ### Part 2a: Source Selection
 
-> List the source node types as a bullet list. For each, one-line reason.
-
 | Source Node Type | Why it is a source |
 |---|---|
-| _node type_ | _one-line reason_ |
-| _node type_ | _one-line reason_ |
+| Entrance | Where the path must start from |
+| Relic Chamber | Where the path must go to, and lead from |
 
 ### Part 2b: Distance Storage
 
-> Fill in the table. No prose required.
-
 | Property | Your answer |
 |---|---|
-| Data structure name | |
-| What the keys represent | |
-| What the values represent | |
-| Lookup time complexity | |
-| Why O(1) lookup is possible | |
+| Data structure name | Hash Map |
+| What the keys represent | Nodes in the graph |
+| What the values represent | Minimum cost to reach the node |
+| Lookup time complexity | O(1) |
+| Why O(1) lookup is possible | This is the time to calculate the hash before going directly to the value |
 
 ### Part 2c: Precomputation Complexity
 
-> State the total complexity and show the arithmetic. Two to three lines max.
-
-- **Number of Dijkstra runs:** _your answer_
-- **Cost per run:** _your answer_
-- **Total complexity:** _your answer_
-- **Justification (one line):** _your answer_
+- **Number of Dijkstra runs:** |M| + 1
+- **Cost per run:** O((|V| + |E|)log|V|)
+- **Total complexity:** O(|M|) * O((|V| + |E|)log|V|) = O(|M| (|V| + |E|)log|V|)
+- **Justification (one line):** The total time complexity is the time it takes to run dijkstras |M| + 1 times which is the multiple of both
 
 ---
 
