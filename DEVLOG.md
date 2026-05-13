@@ -30,12 +30,12 @@ It also tests for how it handles the edge cases of a cycle, diconnected graph, s
 
 ---
 
-## Entry 3 – [Date]: [Short description]
+## Entry 3 – 5-13-2026: Initial Route Planning Steps Done
 
-> Required. At least one entry must describe a bug, wrong assumption, or design change
-> you encountered. Describe what went wrong and how you resolved it.
+Part 2 and 3 are completed with a working implementation of the precompute\_distances() function which has been tested to work correctly.
+This tests that it provides the correct distances for the two graphs used by Dijkstras tests with some small tweaks.
 
-_Your entry here._
+In addition, I corrected a problem in run\_dijkstras() where it didn't check if the source is None which could cause the program to crash.
 
 ---
 
@@ -55,11 +55,11 @@ _Your entry here._
 | Part | Estimated Hours |
 |---|---|
 | Part 1: Problem Analysis | 0.15 |
-| Part 2: Precomputation Design | 1 |
-| Part 3: Algorithm Correctness | |
+| Part 2: Precomputation Design | 1.25 |
+| Part 3: Algorithm Correctness | 0.15 |
 | Part 4: Search Design | |
 | Part 5: State and Search Space | |
 | Part 6: Pruning | |
 | Part 7: Implementation | |
-| README and DEVLOG writing | |
+| README and DEVLOG writing | 3.5 |
 | **Total** | |

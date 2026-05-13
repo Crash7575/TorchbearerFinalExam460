@@ -14,13 +14,13 @@
 ## Part 1: Problem Analysis
 
 - **Why a single shortest-path run from S is not enough:**
-    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes
+    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes.
 
 - **What decision remains after all inter-location costs are known:**
-    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path
+    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path.
 
 - **Why this requires a search over orders (one sentence):**
-    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path
+    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path.
 
 ---
 
@@ -54,38 +54,31 @@
 
 ## Part 3: Algorithm Correctness
 
-> Document your understanding of why Dijkstra produces correct distances.
-> Bullet points and short sentences throughout. No paragraphs.
-
 ### Part 3a: What the Invariant Means
 
-> Two bullets: one for finalized nodes, one for non-finalized nodes.
-> Do not copy the invariant text from the spec.
-
 - **For nodes already finalized (in S):**
-  _Your answer here._
+    - The current distance to a given node v in S is the distance of the shortest path from the source to v.
 
 - **For nodes not yet finalized (not in S):**
-  _Your answer here._
+    - The current distance to a given node u not in S is the distance of the shortest path using only nodes in S from the source to u.
 
 ### Part 3b: Why Each Phase Holds
 
-> One to two bullets per phase. Maintenance must mention nonnegative edge weights.
-
 - **Initialization : why the invariant holds before iteration 1:**
-  _Your answer here._
+    - At the start, no nodes are in S and the only node that can be reached without going through any nodes is the source.
+    - The current distance to the source from the source is 0, and since S is empty no other node can be reached and has an infinite distance from the source.
 
 - **Maintenance : why finalizing the min-dist node is always correct:**
-  _Your answer here._
+    - Taking a node w not in S that has the smallest current distance of all u, any path to w that is shorter than the current distance must take a path through nodes not in S.
+    - Since all edge weights are nonnegative such a path can't be shorter than the current distance to w.
 
 - **Termination : what the invariant guarantees when the algorithm ends:**
-  _Your answer here._
+    - At the end, all nodes in the graph that can be reached are in S.
+    - Thus for the nodes that could be reached from the source the current distance is the distance of the shortest path to that node, while nodes that couldn't be reached are an infinite distance away.
 
 ### Part 3c: Why This Matters for the Route Planner
 
-> One sentence connecting correct distances to correct routing decisions.
-
-_Your answer here._
+With the correct shortest distance torchbearer can make correct decisions about which path to take without waisting fuel on longer paths or ending up at a dead end.
 
 ---
 

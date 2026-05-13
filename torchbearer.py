@@ -37,13 +37,13 @@ def explain_problem():
 
     explination = """
 - **Why a single shortest-path run from S is not enough:**
-    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes
+    - The solution requires that the path include certian nodes (relic chambers) and the shortest path from the start to the exit doesn't necessarily include these nodes.
 
 - **What decision remains after all inter-location costs are known:**
-    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path
+    - After all costs between the important nodes (relic chambers and start) are known, it is a matter of chosing the path between these nodes that produces the shortest path.
 
 - **Why this requires a search over orders (one sentence):**
-    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path
+    - The cost of the path depends on the entire ordering of the nodes, thus local choices can lead to suboptimal paths requiring checking multiple different orderings to find the best path.
     """
 
     return explination
@@ -65,20 +65,18 @@ def select_sources(spawn, relics, exit_node):
     -------
     list[node]
         No duplicates. Order does not matter.
-
-    TODO
     """
 
     # Create the list and add the spawn
-    search_nodes = []
-    search_nodes.append(spawn)
+    source_nodes = []
+    source_nodes.append(spawn)
 
     # Add all relics to the search_nodes
     for node in relics:
-        search_nodes.append(node)
+        source_nodes.append(node)
 
     # Return the nodes to search
-    return search_nodes
+    return source_nodes
 
 
 def run_dijkstra(graph, source):
@@ -94,16 +92,14 @@ def run_dijkstra(graph, source):
     dict[node, float]
         Minimum cost from source to every node in graph.
         Unreachable nodes map to float('inf').
-
-    TODO
     """
 
     heap = []
     finalized_nodes = []
     min_distances = {}
 
-    # Check if graph is empty
-    if (graph is None or len(graph) == 0):
+    # Test input is valid
+    if (graph is None or source is None or len(graph) == 0):
         return min_distances
 
     # Initialize min distances to inf for all nodes in the graph
@@ -136,8 +132,6 @@ def run_dijkstra(graph, source):
             heapq.heappush(heap, (curr_dist + dist, next_node))
             min_distances[next_node] = float(curr_dist + dist)
 
-
-
     return min_distances
 
 
@@ -155,10 +149,22 @@ def precompute_distances(graph, spawn, relics, exit_node):
     dict[node, dict[node, float]]
         Nested structure supporting dist_table[u][v] lookups
         for every source u your design requires.
-
-    TODO
     """
-    pass
+
+    dist_table = {}
+
+    # Check input is valid
+    if (graph is None or spawn is None or relics is None or exit_node is None or len(graph) == 0):
+        return dist_table
+
+    # Select the sources
+    source_nodes = select_sources(spawn, relics, exit_node)
+
+    # Run Dijkstras from each source
+    for source in source_nodes:
+        dist_table[source] = run_dijkstra(graph, source)
+
+    return dist_table
 
 
 # =============================================================================
@@ -172,10 +178,34 @@ def dijkstra_invariant_check():
     str
         Your Part 3 README answers, written as a string.
         Must match what you wrote in README Part 3.
-
-    TODO
     """
-    return "TODO"
+    explination = """
+Part 3a: What the Invariant Means
+- **For nodes already finalized (in S):**
+    - The current distance to a given node v in S is the distance of the shortest path from the source to v.
+
+- **For nodes not yet finalized (not in S):**
+    - The current distance to a given node u not in S is the distance of the shortest path using only nodes in S from the source to u.
+
+
+Part 3b: Why Each Phase Holds
+- **Initialization : why the invariant holds before iteration 1:**
+    - At the start, no nodes are in S and the only node that can be reached without going through any nodes is the source.
+    - The current distance to the source from the source is 0, and since S is empty no other node can be reached and has an infinite distance from the source.
+
+- **Maintenance : why finalizing the min-dist node is always correct:**
+    - Taking a node w not in S that has the smallest current distance of all u, any path to w that is shorter than the current distance must take a path through nodes not in S.
+    - Since all edge weights are nonnegative such a path can't be shorter than the current distance to w.
+
+- **Termination : what the invariant guarantees when the algorithm ends:**
+    - At the end, all nodes in the graph that can be reached are in S.
+    - Thus for the nodes that could be reached from the source the current distance is the distance of the shortest path to that node, while nodes that couldn't be reached are an infinite distance away.
+
+
+Part 3c: Why This Matters for the Route Planner
+With the correct shortest distance torchbearer can make correct decisions about which path to take without waisting fuel on longer paths or ending up at a dead end.
+    """
+    return explination
 
 
 # =============================================================================
@@ -414,11 +444,84 @@ def run_dijkstra_tests():
     # Test 5: None given
     # Check that it doesn't crash when given None and that it returns an empty dictionary
     min_distances = run_dijkstra(None, None)
-    assert min_distances == solution_4, f"Test 5 FAILED: expected {solution_4}, got {min_distances}"
+    assert min_distances == solution_4, f"Test 5a FAILED: expected {solution_4}, got {min_distances}"
+
+    min_distances = run_dijkstra(graph_1, None)
+    assert min_distances == solution_4, f"Test 5b FAILED: expected {solution_4}, got {min_distances}"
 
     # All Tests were passed
     print("\nAll Dijkstra tests passed.")
 
+def run_precompute_tests():
+    # Test 1: Simple graph
+    # Check that it works in the normal case
+    graph_1 = {
+        'A': [('B', 1), ('C', 6)],
+        'B': [('C', 4), ('D', 2)],
+        'C': [],
+        'D': [('A', 1), ('C', 1)]
+    }
+
+    solution_1a = {
+        'A': float(0),
+        'B': float(1),
+        'C': float(4),
+        'D': float(3)
+    }
+
+    solution_1b = {
+        'A': float(1),
+        'B': float(2),
+        'C': float(1),
+        'D': float(0)
+    }
+
+    solution_1 = {}
+    solution_1['A'] = solution_1a
+    solution_1['D'] = solution_1b
+
+    dist_table = precompute_distances(graph_1, 'A', ['D'], 'C')
+    assert dist_table == solution_1, f"Test 1 FAILED: expected {solution_1}, got {dist_table}"
+
+    # Test 2: Cycle and disconnected graph
+    # Check to see that it runs the two test cases for cycle and diconnected graph from the singular function
+    graph_2 = {
+        'A': [('B', 1)],
+        'B': [('C', 2)],
+        'C': [('A', 3)],
+        'D': [('C', 1)]
+    }
+
+    solution_2a = {
+        'A': float(0),
+        'B': float(1),
+        'C': float(3),
+        'D': float('inf')
+    }
+
+    solution_2b = {
+        'A': float(4),
+        'B': float(5),
+        'C': float(1),
+        'D': float(0)
+    }
+
+    solution_2 = {}
+    solution_2['A'] = solution_2a
+
+    dist_table = precompute_distances(graph_2, 'A', [], 'C')
+    assert dist_table == solution_2, f"Test 2a FAILED: expected {solution_2}, got {dist_table}"
+
+    solution_2['D'] = solution_2b
+    dist_table = precompute_distances(graph_2, 'A', ['D'], 'C')
+    assert dist_table == solution_2, f"Test 2b FAILED: expected {solution_2}, got {dist_table}"
+
+    # All Tests were passed
+    print("\nAll Precompute tests passed.")
+
+
+
 if __name__ == "__main__":
     run_dijkstra_tests()
+    run_precompute_tests()
     #_run_tests()
