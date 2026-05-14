@@ -219,10 +219,32 @@ def explain_search():
     str
         Your Part 4 README answers, written as a string.
         Must match what you wrote in README Part 4.
-
-    TODO
     """
-    return "TODO"
+    explination = """
+Why Greedy Fails
+- **The failure mode:**
+    - This problem's structure has overlapping subproblems
+- **Counter-example setup:**
+    - S: (R1, 1), (R2, 2), (T, 5)
+    - R1: (R2, 20), (T, 4)
+    - R2: (R1, 3), (T, 5)
+    - T:
+- **What greedy picks:**
+    - Picks lowest cost connection to unvisited nodes excluding T which is chosen last
+    - Start at S, pick R1 which has the lowest cost
+    - From R1 must pick R2
+    - From R2 must pick T
+    - Total Cost: 1 + 20 + 5 = 26
+- **What optimal picks:**
+    - S -> R2 -> R1 -> T
+    - Total Cost: 2 + 3 + 4 = 9
+- **Why greedy loses:**
+    - Greedy lost because the choice of one node for the path prevents exploring other potential paths
+
+What the Algorithm Must Explore
+- The algorithm must explore the different orderings of the nodes to find the order with the shortest path length
+    """
+    return explination
 
 
 # =============================================================================
@@ -261,8 +283,7 @@ def _explore(dist_table, current_loc, relics_remaining, relics_visited_order,
     ----------
     dist_table : dict[node, dict[node, float]]
     current_loc : node
-    relics_remaining : collection
-        Your chosen data structure from README Part 5b.
+    relics_remaining : dict[node, bool]
     relics_visited_order : list[node]
     cost_so_far : float
     exit_node : node

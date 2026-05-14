@@ -4,11 +4,6 @@
 **Student ID:** 131933669
 **Course:** CS 460 – Algorithms | Spring 2026
 
-> This README is your project documentation. Write it the way a developer would document
-> their design decisions , bullet points, brief justifications, and concrete examples where
-> required. You are not writing an essay. You are explaining what you built and why you built
-> it that way. Delete all blockquotes like this one before submitting.
-
 ---
 
 ## Part 1: Problem Analysis
@@ -45,10 +40,10 @@
 
 ### Part 2c: Precomputation Complexity
 
-- **Number of Dijkstra runs:** |M| + 1
-- **Cost per run:** O((|V| + |E|)log|V|)
-- **Total complexity:** O(|M|) * O((|V| + |E|)log|V|) = O(|M| (|V| + |E|)log|V|)
-- **Justification (one line):** The total time complexity is the time it takes to run dijkstras |M| + 1 times which is the multiple of both
+- **Number of Dijkstra runs:** k + 1
+- **Cost per run:** O(m log(n))
+- **Total complexity:** O(km log(n))
+- **Justification (one line):** The total time complexity is the time it takes to run dijkstras k + 1 times which is the multiple of both
 
 ---
 
@@ -86,20 +81,28 @@ With the correct shortest distance torchbearer can make correct decisions about 
 
 ### Why Greedy Fails
 
-> State the failure mode. Then give a concrete counter-example using specific node names
-> or costs (you may use the illustration example from the spec). Three to five bullets.
-
-- **The failure mode:** _Your answer here._
-- **Counter-example setup:** _Your answer here._
-- **What greedy picks:** _Your answer here._
-- **What optimal picks:** _Your answer here._
-- **Why greedy loses:** _Your answer here._
+- **The failure mode:**
+    - This problem's structure has overlapping subproblems
+- **Counter-example setup:**
+    - S: (R1, 1), (R2, 2), (T, 5)
+    - R1: (R2, 20), (T, 4)
+    - R2: (R1, 3), (T, 5)
+    - T:
+- **What greedy picks:**
+    - Picks lowest cost connection to unvisited nodes excluding T which is chosen last
+    - Start at S, pick R1 which has the lowest cost
+    - From R1 must pick R2
+    - From R2 must pick T
+    - Total Cost: 1 + 20 + 5 = 26
+- **What optimal picks:**
+    - S -> R2 -> R1 -> T
+    - Total Cost: 2 + 3 + 4 = 9
+- **Why greedy loses:**
+    - Greedy lost because the choice of one node for the path prevents exploring other potential paths
 
 ### What the Algorithm Must Explore
 
-> One bullet. Must use the word "order."
-
-- _Your answer here._
+- The algorithm must explore the different orderings of the nodes to find the order with the shortest path length
 
 ---
 
@@ -107,33 +110,26 @@ With the correct shortest distance torchbearer can make correct decisions about 
 
 ### Part 5a: State Representation
 
-> Document the three components of your search state as a table.
-> Variable names here must match exactly what you use in torchbearer.py.
-
 | Component | Variable name in code | Data type | Description |
 |---|---|---|---|
-| Current location | | | |
-| Relics already collected | | | |
-| Fuel cost so far | | | |
+| Current location | current\_loc | node | The current node that is being explored |
+| Relics already collected | relics\_visited\_order | list | Relics that have been collected in order |
+| Fuel cost so far | cost\_so\_far | float | The cost of the fuel up to this location |
 
 ### Part 5b: Data Structure for Visited Relics
 
-> Fill in the table.
-
 | Property | Your answer |
 |---|---|
-| Data structure chosen | |
-| Operation: check if relic already collected | Time complexity: |
-| Operation: mark a relic as collected | Time complexity: |
-| Operation: unmark a relic (backtrack) | Time complexity: |
-| Why this structure fits | |
+| Data structure chosen | Hash Map (node, bool) |
+| Operation: check if relic already collected | Time complexity: O(1) |
+| Operation: mark a relic as collected | Time complexity: O(1) |
+| Operation: unmark a relic (backtrack) | Time complexity: O(1) |
+| Why this structure fits | Hash Map provides quick lookup and change and this will be used often |
 
 ### Part 5c: Worst-Case Search Space
 
-> Two bullets.
-
-- **Worst-case number of orders considered:** _Your answer (in terms of k)._
-- **Why:** _One-line justification._
+- **Worst-case number of orders considered:** k!
+- **Why:** In the worst case all orderings must be considered which is the permutation of the k elements
 
 ---
 
@@ -141,30 +137,23 @@ With the correct shortest distance torchbearer can make correct decisions about 
 
 ### Part 6a: Best-So-Far Tracking
 
-> Three bullets.
-
-- **What is tracked:** _Your answer here._
-- **When it is used:** _Your answer here._
-- **What it allows the algorithm to skip:** _Your answer here._
+- **What is tracked:** Best distance so far
+- **When it is used:** Distance to End Node + Current Path Length > Best So Far
+- **What it allows the algorithm to skip:** Paths that can't produce a better distance than the best so far
 
 ### Part 6b: Lower Bound Estimation
 
-> Three bullets.
-
-- **What information is available at the current state:** _Your answer here._
-- **What the lower bound accounts for:** _Your answer here._
-- **Why it never overestimates:** _Your answer here._
+- **What information is available at the current state:** Distance to end node
+- **What the lower bound accounts for:** The minimum remaining distance would make the path longer than the best so far
+- **Why it never overestimates:** The distance to the end is the minimum path from the current node to the end, and any path from this node will be at least that long
 
 ### Part 6c: Pruning Correctness
 
-> One to two bullets. Explain why pruning is safe.
-
-- _Your answer here._
+- Only if the best path from the current node to the end produces a longer path than the best path so far is the branch pruned
+- Thus even if all remaining nodes are on this best path it would be imposible to make a better path than the current best and it is safe to prune this branch
 
 ---
 
 ## References
 
-> Bullet list. If none beyond lecture notes, write that.
-
-- _Your references here._
+- Lecture Notes
