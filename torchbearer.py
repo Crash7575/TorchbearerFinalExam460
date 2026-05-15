@@ -31,8 +31,6 @@ def explain_problem():
     str
         Your Part 1 README answers, written as a string.
         Must match what you wrote in README Part 1.
-
-    TODO
     """
 
     explination = """
@@ -268,10 +266,18 @@ def find_optimal_route(dist_table, spawn, relics, exit_node):
     tuple[float, list[node]]
         (minimum_fuel_cost, ordered_relic_list)
         Returns (float('inf'), []) if no valid route exists.
-
-    TODO
     """
-    pass
+    relics_remaining = {}
+    best = [float('inf'), []]
+
+    # Initialize the relics_remaining
+    for node in relics:
+        relics_remaining[node] = True
+
+    # Explore from the spawn
+    _explore(dist_table, spawn, relics_remaining, [], 0, exit_node, best)
+
+    return best
 
 
 def _explore(dist_table, current_loc, relics_remaining, relics_visited_order,
@@ -294,15 +300,50 @@ def _explore(dist_table, current_loc, relics_remaining, relics_visited_order,
     -------
     None
         Updates best in place.
-
-    TODO
-    Implement: base case, pruning, recursive case, backtracking.
-
-    REQUIRED: Add a 1-2 sentence comment near your pruning condition
-    explaining why it is safe (cannot skip the optimal solution).
-    This comment is graded.
     """
-    pass
+    # Base case
+    if len(relics_remaining) == len(relics_visited_order):
+        # Add the distance to the exit node and check how it matches
+        cost_so_far += dist_table[current_loc][exit_node]
+
+        # Check if this path is better than the best so far
+        if (best[0] > cost_so_far):
+            best[0] = cost_so_far
+            best[1] = relics_visited_order.copy()
+
+        # Backtrack the added distance and return to the previous level
+        cost_so_far -= dist_table[current_loc][exit_node]
+        return
+
+
+    # Pruning Check
+    # Checks if the shortest path from this node to the exit node added to the current path is longer than the current best path.
+    # Since any path from this node through the remaining relic nodes will be at least this long it is safe prune this branch if true.
+    if (best[0] < cost_so_far + dist_table[current_loc][exit_node]):
+        return
+
+    # Explore the remaining nodes
+    for node in relics_remaining:
+        # Check if the node has been used in the solution already
+        if not relics_remaining[node]:
+            continue
+        
+        # Add this node to the current solution
+        relics_remaining[node] = False
+        relics_visited_order.append(node)
+        cost_so_far += dist_table[current_loc][node]
+
+        # Do the recursive exploration
+        _explore(dist_table, node, relics_remaining, relics_visited_order, cost_so_far, exit_node, best)
+
+        # Backtrack
+        relics_remaining[node] = True
+        relics_visited_order.pop()
+        cost_so_far -= dist_table[current_loc][node]
+
+    # All paths from this node are done exploring
+    return
+
 
 
 # =============================================================================
@@ -323,10 +364,14 @@ def solve(graph, spawn, relics, exit_node):
     tuple[float, list[node]]
         (minimum_fuel_cost, ordered_relic_list)
         Returns (float('inf'), []) if no valid route exists.
-
-    TODO
     """
-    pass
+    # Create the distance table
+    dist_table = precompute_distances(graph, spawn, relics, exit_node)
+
+    # Run the backtracking to find the optimal route
+    best_route = find_optimal_route(dist_table, spawn, relics, exit_node)
+
+    return best_route
 
 
 # =============================================================================
@@ -543,6 +588,6 @@ def run_precompute_tests():
 
 
 if __name__ == "__main__":
-    run_dijkstra_tests()
-    run_precompute_tests()
-    #_run_tests()
+    #run_dijkstra_tests()
+    #run_precompute_tests()
+    _run_tests()

@@ -156,4 +156,4 @@ With the correct shortest distance torchbearer can make correct decisions about 
 
 ## References
 
-- Lecture Notes
+- Lecture Notes Only
